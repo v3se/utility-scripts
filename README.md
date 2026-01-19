@@ -74,12 +74,39 @@ The script excludes common cache directories, temporary files, and large unneces
 
 Modify the `EXCLUDES` array to adjust what gets backed up.
 
-## Restore
+## Managing Backups
 
-List available snapshots:
+All restic commands require credentials. Source the secrets file first:
 ```bash
-restic -r s3:s3.eu-central-003.backblazeb2.com/bucket-name snapshots
+source .backup-secrets
 ```
+
+List all snapshots:
+```bash
+restic -r s3:s3.eu-central-003.backblazeb2.com/your-bucket-name snapshots
+```
+
+List files in a specific snapshot:
+```bash
+restic -r s3:s3.eu-central-003.backblazeb2.com/your-bucket-name ls <snapshot-id>
+```
+
+List files in the latest snapshot:
+```bash
+restic -r s3:s3.eu-central-003.backblazeb2.com/your-bucket-name ls latest
+```
+
+List files with details:
+```bash
+restic -r s3:s3.eu-central-003.backblazeb2.com/your-bucket-name ls -l <snapshot-id>
+```
+
+List files in specific path:
+```bash
+restic -r s3:s3.eu-central-003.backblazeb2.com/your-bucket-name ls <snapshot-id> /home/user/Documents
+```
+
+## Restore
 
 Restore specific snapshot:
 ```bash
