@@ -4,7 +4,6 @@
 # Add excludes to the excludes array as needed
 
 set -e
-set -x
 
 ### Configuration ###
 
