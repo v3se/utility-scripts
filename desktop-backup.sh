@@ -5,6 +5,35 @@
 
 set -e
 
+# Error handler for notifications
+trap 'notify_failure' ERR
+
+notify_failure() {
+    # Get the user who should receive the notification
+    if [ -n "$SUDO_USER" ]; then
+        NOTIFY_USER="$SUDO_USER"
+    else
+        NOTIFY_USER="$(whoami)"
+    fi
+    
+    # Send desktop notification
+    sudo -u "$NOTIFY_USER" DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u $NOTIFY_USER)/bus \
+        notify-send -u critical "Backup Failed" "Desktop backup failed. Check logs for details."
+    
+    exit 1
+}
+
+notify_success() {
+    if [ -n "$SUDO_USER" ]; then
+        NOTIFY_USER="$SUDO_USER"
+    else
+        NOTIFY_USER="$(whoami)"
+    fi
+    
+    sudo -u "$NOTIFY_USER" DISPLAY=:0 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/$(id -u $NOTIFY_USER)/bus \
+        notify-send -u normal "Backup Successful" "Desktop backup completed successfully."
+}
+
 ### Configuration ###
 
 # Load secrets from environment file
@@ -84,3 +113,4 @@ restic -r ${B2_URL} forget \
     --prune
 
 echo "Backup completed successfully!"
+notify_success
