@@ -68,6 +68,7 @@ fi
 echo "Starting backup of /home..."
 restic -r ${B2_URL} backup /home \
     "${EXCLUDES[@]}" \
+    --exclude-caches \
     --tag "desktop-backup" \
     --tag "$(hostname)" \
     --verbose
